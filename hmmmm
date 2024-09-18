@@ -5453,7 +5453,7 @@ Tab:AddButton({
 local Lighting = game:GetService("Lighting")
 
 -- Set to night-time (around 20:00 is typical for night)
-Lighting.ClockTime = 20
+Lighting.ClockTime = 24
 
 -- Darken the ambient lighting
 Lighting.Ambient = Color3.fromRGB(50, 50, 50)
@@ -5484,7 +5484,7 @@ Tab:AddButton({
 local Lighting = game:GetService("Lighting")
 
 -- Set to night-time (around 20:00 is typical for night)
-Lighting.ClockTime = 20
+Lighting.ClockTime = 24
 
 -- Darken the ambient lighting
 Lighting.Ambient = Color3.fromRGB(50, 50, 50)
@@ -5515,7 +5515,7 @@ Tab:AddButton({
       	local Lighting = game:GetService("Lighting")
 
 -- Set to night-time (around 20:00 is typical for night)
-Lighting.ClockTime = 20
+Lighting.ClockTime = 24
 
 -- Make the ambient lighting a bit darker
 Lighting.Ambient = Color3.fromRGB(75, 75, 75)
@@ -5547,7 +5547,7 @@ Tab:AddButton({
 local Lighting = game:GetService("Lighting")
 
 -- Set to night-time (around 20:00 is typical for night)
-Lighting.ClockTime = 20
+Lighting.ClockTime = 24
 
 -- Lighten the ambient lighting a bit
 Lighting.Ambient = Color3.fromRGB(100, 100, 100)
