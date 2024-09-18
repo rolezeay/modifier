@@ -1,3 +1,230 @@
+--Variables
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local Light = game:GetService("Lighting")
+local HttpService = game:GetService("HttpService")
+
+--Functions
+--FUNCTIONS
+_G.shield = function(id)
+	if not table.find(ForceWhitelist,id) then
+		table.insert(ForceWhitelist, id)
+	end
+end
+
+local function RandomChar()
+	local length = math.random(1,5)
+	local array = {}
+	for i = 1, length do
+		array[i] = string.char(math.random(32, 126))
+	end
+	return table.concat(array)
+end
+
+local function ChangeToggleColor(Button)
+	led = Button.Ticket_Asset
+	if led.ImageColor3 == Color3.fromRGB(255, 0, 0) then
+		led.ImageColor3 = Color3.fromRGB(0, 255, 0)
+	else
+		led.ImageColor3 = Color3.fromRGB(255, 0, 0)
+	end
+end
+
+local function GetPing()
+	return (game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())/1000
+end
+
+local function GetPlayer(UserDisplay)
+	if UserDisplay ~= "" then
+        for i,v in pairs(Players:GetPlayers()) do
+            if v.Name:lower():match(UserDisplay) or v.DisplayName:lower():match(UserDisplay) then
+                return v
+            end
+        end
+		return nil
+	else
+		return nil
+    end
+end
+
+local function GetCharacter(Player)
+	if Player.Character then
+		return Player.Character
+	end
+end
+
+local function GetRoot(Player)
+	if GetCharacter(Player):FindFirstChild("HumanoidRootPart") then
+		return GetCharacter(Player).HumanoidRootPart
+	end
+end
+
+local function TeleportTO(posX,posY,posZ,player,method)
+	pcall(function()
+		if method == "safe" then
+			task.spawn(function()
+				for i = 1,30 do
+					task.wait()
+					GetRoot(plr).Velocity = Vector3.new(0,0,0)
+					if player == "pos" then
+						GetRoot(plr).CFrame = CFrame.new(posX,posY,posZ)
+					else
+						GetRoot(plr).CFrame = CFrame.new(GetRoot(player).Position)+Vector3.new(0,2,0)
+					end
+				end
+			end)
+		else
+			GetRoot(plr).Velocity = Vector3.new(0,0,0)
+			if player == "pos" then
+				GetRoot(plr).CFrame = CFrame.new(posX,posY,posZ)
+			else
+				GetRoot(plr).CFrame = CFrame.new(GetRoot(player).Position)+Vector3.new(0,2,0)
+			end
+		end
+	end)
+end
+
+local function PredictionTP(player,method)
+	local root = GetRoot(player)
+	local pos = root.Position
+	local vel = root.Velocity
+	GetRoot(plr).CFrame = CFrame.new((pos.X)+(vel.X)*(GetPing()*3.5),(pos.Y)+(vel.Y)*(GetPing()*2),(pos.Z)+(vel.Z)*(GetPing()*3.5))
+	if method == "safe" then
+		task.wait()
+		GetRoot(plr).CFrame = CFrame.new(pos)
+		task.wait()
+		GetRoot(plr).CFrame = CFrame.new((pos.X)+(vel.X)*(GetPing()*3.5),(pos.Y)+(vel.Y)*(GetPing()*2),(pos.Z)+(vel.Z)*(GetPing()*3.5))
+	end
+end
+
+local function Touch(x,root)
+	pcall(function()
+		x = x:FindFirstAncestorWhichIsA("Part")
+		if x then
+			if firetouchinterest then
+				task.spawn(function()
+					firetouchinterest(x, root, 1)
+					task.wait()
+					firetouchinterest(x, root, 0)
+				end)
+			end
+		end
+	end)
+end
+
+
+local function GetPush()
+	local TempPush = nil
+	pcall(function()
+		if plr.Backpack:FindFirstChild("Push") then
+			PushTool = plr.Backpack.Push
+			PushTool.Parent = plr.Character
+			TempPush = PushTool
+		end
+		for i,v in pairs(Players:GetPlayers()) do
+			if v.Character:FindFirstChild("Push") then
+				TempPush = v.Character.Push
+			end
+		end
+	end)
+	return TempPush
+end
+
+local function CheckPotion()
+	if plr.Backpack:FindFirstChild("potion") then
+		PotionTool = plr.Backpack:FindFirstChild("potion")
+		return true
+	elseif plr.Character:FindFirstChild("potion") then
+		PotionTool = plr.Character:FindFirstChild("potion")
+		return true
+	else
+		return false
+	end
+end
+
+local function Push(Target)
+	local Push = GetPush()
+	local FixTool = nil
+	if Push ~= nil then
+		local args = {[1] = Target.Character}
+		GetPush().PushTool:FireServer(unpack(args))
+	end
+	if plr.Character:FindFirstChild("Push") then
+		plr.Character.Push.Parent = plr.Backpack
+	end
+	if plr.Character:FindFirstChild("ModdedPush") then
+		FixTool = plr.Character:FindFirstChild("ModdedPush")
+		FixTool.Parent = plr.Backpack
+		FixTool.Parent = plr.Character
+	end
+	if plr.Character:FindFirstChild("ClickTarget") then
+		FixTool = plr.Character:FindFirstChild("ClickTarget")
+		FixTool.Parent = plr.Backpack
+		FixTool.Parent = plr.Character
+	end
+	if plr.Character:FindFirstChild("potion") then
+		FixTool = plr.Character:FindFirstChild("potion")
+		FixTool.Parent = plr.Backpack
+		FixTool.Parent = plr.Character
+	end
+end
+
+local function ToggleRagdoll(bool)
+	pcall(function()
+		plr.Character["Falling down"].Disabled = bool
+		plr.Character["Swimming"].Disabled = bool
+		plr.Character["StartRagdoll"].Disabled = bool
+		plr.Character["Pushed"].Disabled = bool
+		plr.Character["RagdollMe"].Disabled = bool
+	end)
+end
+
+local function ToggleVoidProtection(bool)
+	if bool then
+		game.Workspace.FallenPartsDestroyHeight = 0/0
+	else
+		game.Workspace.FallenPartsDestroyHeight = -500
+	end
+end
+
+local function PlayAnim(id,time,speed)
+	pcall(function()
+		plr.Character.Animate.Disabled = false
+		local hum = plr.Character.Humanoid
+		local animtrack = hum:GetPlayingAnimationTracks()
+		for i,track in pairs(animtrack) do
+			track:Stop()
+		end
+		plr.Character.Animate.Disabled = true
+		local Anim = Instance.new("Animation")
+		Anim.AnimationId = "rbxassetid://"..id
+		local loadanim = hum:LoadAnimation(Anim)
+		loadanim:Play()
+		loadanim.TimePosition = time
+		loadanim:AdjustSpeed(speed)
+		loadanim.Stopped:Connect(function()
+			plr.Character.Animate.Disabled = false
+			for i, track in pairs (animtrack) do
+        		track:Stop()
+    		end
+		end)
+	end)
+end
+
+local function StopAnim()
+	plr.Character.Animate.Disabled = false
+    local animtrack = plr.Character.Humanoid:GetPlayingAnimationTracks()
+    for i, track in pairs (animtrack) do
+        track:Stop()
+    end
+end
+
+local function SendNotify(title, message, duration)
+	game:GetService("StarterGui"):SetCore("SendNotification", {Title = title,Text = message,Duration = duration;})
+end
+
 --Main
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
@@ -3143,6 +3370,2049 @@ Tab:AddButton({
 	Callback = function()
       		 FakeLag = false
   	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "----------------",
+	Icon = "rbxassetid://",
+	PremiumOnly = false
+})
+
+local Tab = Window:MakeTab({
+	Name = "Normal Packs",
+	Icon = "rbxassetid://7734021469",
+	PremiumOnly = false
+})
+
+
+local Section = Tab:AddSection({
+	Name = "Animations that already exists on roblox."
+})
+
+Tab:AddButton({
+	Name = "Vampire animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083445855"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083450166"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083462077"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083455352"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083439238"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083443587"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616111295"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616113536"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616122287"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616117076"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616104706"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616108001"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616158929"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616160636"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=707742142"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=707855907"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=707897309"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=707861613"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=707853694"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=707826056"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=707829716"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=845397899"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=845400520"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=845403856"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=845386501"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=845398858"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=891667138"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=891636393"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=891627522"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=891609353"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=891617961"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=656117400"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=656118341"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=656121766"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=656118852"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=656117878"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=656114359"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=656115606"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083195517"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083214717"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083178339"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083218792"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083182000"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083189019"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=742637544"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=742638445"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=742640026"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=742638842"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=742637942"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=742636889"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=742637151"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=750785693"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=750783738"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=750782230"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=750779899"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=750780242"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=782841498"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=782842708"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=782847020"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=657595757"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=657568135"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=657552124"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=657564596"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=658409194"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=658360781"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=657600338"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Secret Packs",
+	Icon = "rbxassetid://8997386448",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Animation packs thar are cancelled/deleted."
+})
+
+Tab:AddButton({
+	Name = "Ghost animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1132473842"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1132477671"
+    Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1132510133"
+    Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1132494274"
+    Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1132489853"
+    Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1132461372"
+    Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1132469004"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1069977950"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1069987858"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1070017263"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1070001516"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1069946257"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1069973677"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980338"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980348"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1212954642"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1213044953"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1212900995"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=941003647"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=941013098"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=941028902"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=941015281"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=941008832"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=940996062"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=941000007"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1014390418"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1014398616"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1014421541"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1014401683"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1014394726"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1014380606"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1014384571"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1149612882"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1150842221"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1151231493"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1150967949"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1150944216"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1148811837"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1148863382"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+
+Tab:AddButton({
+	Name = "Real Zombie animation pack",
+	Callback = function()
+            local Animate = plr.Character.Animate
+	Animate.Disabled = true
+	StopAnim()
+	Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
+	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=3489174223"
+	Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=3489173414"
+	Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
+	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
+	Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
+	plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "Custom",
+	Icon = "rbxassetid://7743871002",
+	PremiumOnly = false
+})
+local Section = Tab:AddSection({
+	Name = "Customize your walking/idle/run and etc."
+})
+
+local Section = Tab:AddSection({
+	Name = "Idle"
+})
+
+Tab:AddButton({
+	Name = "Vampire idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083445855"
+        Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083450166"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616111295"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616113536"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616158929"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616160636"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=707742142"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=707855907"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ghost idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=845397899"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=845400520"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=616006778"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=616008087"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=891621366"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=891633237"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=656117400"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=656118341"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1083195517"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1083214717"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=742637544"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=742638445"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=750781874"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=750782770"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1132473842"
+    Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1132477671"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=782841498"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=782845736"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=657595757"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=657568135"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1069977950"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1069987858"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1212900985"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=941003647"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=941013098"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1014390418"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1014398616"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=1149612882"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=1150842221"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Realistic Zombie idle",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
+	Animate.idle.Animation2.AnimationId = "http://www.roblox.com/asset/?id=3489171152"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Walking"
+})
+
+Tab:AddButton({
+	Name = "Vampire walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083473930"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616122287"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616168032"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=707897309"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ghost walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+    	Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=845403856"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=891667138"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=656121766"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1083178339"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=742640026"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=750785693"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1132510133"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=782843345"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=657552124"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1070017263"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980338"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=941028902"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1014421541"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=1151231493"
+
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Realistic Zombie walk",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.walk.WalkAnim.AnimationId = "http://www.roblox.com/asset/?id=3489174223"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Running"
+})
+
+Tab:AddButton({
+	Name = "Vampire run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083462077"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616117076"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616163682"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=707861613"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ghost run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616013216"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=845386501"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=616010382"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=891636393"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=656118852"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1083216690"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=742638842"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=750783738"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1132494274"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=782842708"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=657564596"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1070001516"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1212980348"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=941015281"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1014401683"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=1150967949"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Realistic Zombie run",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.run.RunAnim.AnimationId = "http://www.roblox.com/asset/?id=3489173414"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Jumping"
+})
+
+Tab:AddButton({
+	Name = "Vampire jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083455352"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616115533"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=707853694"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ghost jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=845398858"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616008936"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=891627522"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=656117878"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1083218792"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=742637942"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=750782230"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1132489853"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=782847020"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=658409194"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1069984524"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1212954642"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=941008832"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1014394726"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=1150944216"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Realistic Zombie jump",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.jump.JumpAnim.AnimationId = "http://www.roblox.com/asset/?id=616161997"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Climbing"
+})
+
+Tab:AddButton({
+	Name = "Vampire climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083439238"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616104706"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
+
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=707826056"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ghost climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=845392038"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616003713"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=891609353"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=656114359"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1083182000"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=742636889"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=750779899"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1132461372"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=782843869"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=658360781"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+    	Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1069946257"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1213044953"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=940996062"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1014380606"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=1148811837"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Realistic Zombie climb",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=616156119"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Falling"
+})
+
+Tab:AddButton({
+	Name = "Vampire fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083443587"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Hero fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616108001"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Zombie fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Mage fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=707829716"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ghost fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Elder fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=845396048"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Levitation fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616005863"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Astronaut fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=891617961"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Ninja fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.climb.ClimbAnim.AnimationId = "http://www.roblox.com/asset/?id=656114359"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Werewolf fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1083189019"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cartoony fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=742637151"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Pirate fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=750780242"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Sneaky fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1132469004"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Toy fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=782846423"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Knight fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=657600338"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Confident fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1069973677"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Popstar fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1212900995"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Princess fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=941000007"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Cowboy fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1014384571"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Patrol fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=1148863382"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+Tab:AddButton({
+	Name = "Realistic Zombie fall",
+	Callback = function()
+        local Animate = plr.Character.Animate
+        Animate.Disabled = true
+        StopAnim()
+        Animate.fall.FallAnim.AnimationId = "http://www.roblox.com/asset/?id=616157476"
+        plr.Character.Humanoid:ChangeState(3)
+	Animate.Disabled = false
+  	end    
+})
+
+local Tab = Window:MakeTab({
+	Name = "----------------",
+	Icon = "rbxassetid://",
+	PremiumOnly = false
 })
 
 local Tab = Window:MakeTab({
