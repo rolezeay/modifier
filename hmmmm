@@ -3177,9 +3177,39 @@ local Section = Tab:AddSection({
 	Name = "(Gece Modu)"
 })
 
-
 Tab:AddButton({
 	Name = "GM V1",
+	Callback = function()
+local Lighting = game:GetService("Lighting")
+
+-- Set to night-time (around 20:00 is typical for night)
+Lighting.ClockTime = 20
+
+-- Darken the ambient lighting
+Lighting.Ambient = Color3.fromRGB(50, 50, 50)
+Lighting.OutdoorAmbient = Color3.fromRGB(50, 50, 50)
+
+-- Adjust the fog for a darker night effect (optional)
+Lighting.FogColor = Color3.fromRGB(0, 0, 0)
+Lighting.FogEnd = 500 -- You can adjust this to your liking
+
+-- Set a darker skybox if desired (optional)
+local skybox = Instance.new("Sky")
+skybox.SkyboxBk = "rbxassetid://123456" -- Replace with your night-time skybox asset ID
+skybox.SkyboxDn = "rbxassetid://123456"
+skybox.SkyboxFt = "rbxassetid://123456"
+skybox.SkyboxLf = "rbxassetid://123456"
+skybox.SkyboxRt = "rbxassetid://123456"
+skybox.SkyboxUp = "rbxassetid://123456"
+skybox.Parent = Lighting
+
+-- Optional: You can adjust the brightness or other properties if needed
+Lighting.Brightness = 1 -- Adjust this as necessary
+  	end    
+})
+
+Tab:AddButton({
+	Name = "GM V2",
 	Callback = function()
       	local Lighting = game:GetService("Lighting")
 
@@ -3211,7 +3241,7 @@ Lighting.Brightness = 1.5 -- You can fine-tune this as needed
 })
 
 Tab:AddButton({
-	Name = "GM V2",
+	Name = "GM V3",
 	Callback = function()
 local Lighting = game:GetService("Lighting")
 
