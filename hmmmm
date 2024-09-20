@@ -3187,6 +3187,140 @@ local Tab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+Tab:AddButton({
+	Name = "Karakter Kayma (X) (BUGGY)",
+	Callback = function()
+local UIS = game:GetService("UserInputService")
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local rootPart = character:WaitForChild("HumanoidRootPart")
+
+local slideEnabled = false
+local sliding = false
+local slideDuration = 0.5 -- time the slide will last
+local slideForce = 60
+local slideResistance = 0.2
+
+-- Function to toggle the slide effect on/off
+local function toggleSlide()
+	slideEnabled = not slideEnabled
+	if not slideEnabled then
+		-- Remove sliding effect
+		humanoid.WalkSpeed = 16
+		print("Slide disabled")
+	else
+		print("Slide enabled")
+	end
+end
+
+-- Function to handle sliding when turning or stopping
+local function handleSliding()
+	if not slideEnabled or sliding then return end
+	sliding = true
+
+	-- Simulate slide by applying velocity
+	local velocity = Instance.new("BodyVelocity")
+	velocity.MaxForce = Vector3.new(100000, 0, 100000)
+	velocity.Velocity = rootPart.Velocity * slideResistance
+	velocity.Parent = rootPart
+
+	wait(slideDuration)
+	velocity:Destroy()
+	sliding = false
+end
+
+-- Detect when player is stopping or turning sharply
+humanoid:GetPropertyChangedSignal("MoveDirection"):Connect(function()
+	-- Only slide if player is moving and stops or changes direction
+	if humanoid.MoveDirection.Magnitude == 0 or humanoid.MoveDirection:Dot(rootPart.CFrame.LookVector) < 0.5 then
+		handleSliding()
+	end
+end)
+
+-- Keybind to toggle the sliding mechanic
+UIS.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.X then
+		toggleSlide()
+	end
+end)
+  	end    
+})
+
+Tab:AddButton({
+	Name = "P/C Keybindları",
+	Callback = function()
+  getgenv().WalkSpeedValue = 24 -- Set your desired default walk speed here
+local speedChanged = false -- Track if the walk speed has been changed to 100 by pressing "C"
+
+local Player = game:GetService("Players").LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
+-- Function to update the WalkSpeed
+local function updateWalkSpeed()
+    if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+        Player.Character.Humanoid.WalkSpeed = getgenv().WalkSpeedValue
+    end
+end
+
+-- Listen for changes to the WalkSpeed property and update it
+Player.Character.Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(updateWalkSpeed)
+updateWalkSpeed() -- Initial setting of the WalkSpeed
+
+-- Variables to track holding the P key
+local holdingP = false
+
+-- Detect when a key is pressed
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if gameProcessedEvent then return end -- If the game is processing an event like chat, don't do anything
+
+    if input.KeyCode == Enum.KeyCode.P then
+        -- Start holding the P key to decrease WalkSpeed
+        holdingP = true
+        while holdingP do
+            getgenv().WalkSpeedValue = math.max(5, getgenv().WalkSpeedValue - 5) -- Decrease by 5, but not below 5
+            updateWalkSpeed()
+            print("Decreased WalkSpeed to: " .. getgenv().WalkSpeedValue)
+            wait(0.1) -- Adjust the speed of decrease here (0.1 seconds between each decrease)
+        end
+    elseif input.KeyCode == Enum.KeyCode.C then
+        -- Toggle WalkSpeed to 100 or back to 17 with the "C" key
+        if not speedChanged then
+            getgenv().WalkSpeedValue = 100 -- Set WalkSpeed to 100
+            speedChanged = true
+        else
+            getgenv().WalkSpeedValue = 17 -- Set WalkSpeed to 17
+            speedChanged = false
+        end
+        updateWalkSpeed()
+        print("WalkSpeed changed to: " .. getgenv().WalkSpeedValue)
+    end
+end)
+
+-- Detect when a key is released
+UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
+    if input.KeyCode == Enum.KeyCode.P then
+        holdingP = false -- Stop decreasing WalkSpeed when P is released
+
+        -- Increase WalkSpeed on a single press after release
+        if not gameProcessedEvent then
+            getgenv().WalkSpeedValue = getgenv().WalkSpeedValue + 5 -- Increase by 5
+            updateWalkSpeed()
+            print("Increased WalkSpeed to: " .. getgenv().WalkSpeedValue)
+        end
+    end
+end)
+ 
+OrionLib:MakeNotification({
+	Name = "(DELUXIE) Hazır!",
+	Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
+	Image = "rbxassetid://7733964719",
+	Time = 5
+})
+
+  	end    
+})
+
 local Section = Tab:AddSection({
 	Name = "Kaydırıcı yok çünkü bir sebepten dolayı oyunu çökertiyor."
 })
