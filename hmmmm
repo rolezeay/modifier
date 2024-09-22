@@ -229,7 +229,7 @@ end
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 local Player = game.Players.LocalPlayer
-local Window = OrionLib:MakeWindow({Name = "Deluxie Modifier 🤑", HidePremium = false, SaveConfig = true, IntroText = "DELUXIE", IntroIcon = "rbxassetid://7733752630", Icon = "rbxassetid://7733920519", ConfigFolder = "OrionTest"})
+local Window = OrionLib:MakeWindow({Name = "Deluxie Modifier - V2.0 🤑", HidePremium = false, SaveConfig = true, IntroText = "DELUXIE", IntroIcon = "rbxassetid://7733752630", Icon = "rbxassetid://7733920519", ConfigFolder = "OrionTest"})
 
 --Tab 1
 
