@@ -1,3 +1,11 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Enter our license key. / Lisans Anahtarımızı girin.", HidePremium = false, SaveConfig = true, IntroEnabled = false, ConfigFolder = "OrionTest"})
+
+_G.Key = "keysystem"
+_G.KeyInput = "string"
+
+function MakeScriptHub()
 --Variables
 local Players = game:GetService("Players")
 local plr = Players.LocalPlayer
@@ -6318,5 +6326,31 @@ loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Synergy-Networks
         CustomBypasses = {} -- Dictionary table needed here. Not required
     }
 })
+  	end    
+})
+end
+
+
+local Tab = Window:MakeTab({
+	Name = "Key Checking",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddTextbox({
+	Name = "Enter License Key/Lisans Anahtarını girin:",
+	Default = "",
+	TextDisappear = true,
+	Callback = function(Value)
+		_G.KeyInput = Value
+	end	  
+})
+
+Tab:AddButton({
+	Name = "Check License/Lisans Kontrol Et",
+	Callback = function()
+      		if _G.KeyInput == _G.Key then
+			MakeScriptHub()	
+			end
   	end    
 })
