@@ -2,7 +2,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 local Window = OrionLib:MakeWindow({Name = "Enter our license key. / Lisans Anahtarımızı girin.", HidePremium = false, SaveConfig = true, IntroEnabled = false, ConfigFolder = "OrionTest"})
 
-_G.Key = "keysystem"
+_G.Key = "1255"
 _G.KeyInput = "string"
 
 function MakeScriptHub()
