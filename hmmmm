@@ -20719,6 +20719,20 @@ end
 })
 
 Tab:AddButton({
+	Name = "CMD X",
+	Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
+  	end    
+})
+
+Tab:AddButton({
+	Name = "C00lgui",
+	Callback = function()
+        loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)()
+  	end    
+})
+
+Tab:AddButton({
     Name = "Anti Chat Logger + Bypasser",
     Callback = function()
 loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Synergy-Networks/products/main/BetterBypasser/loader.lua"))({
