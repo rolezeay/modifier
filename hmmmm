@@ -240,7 +240,7 @@ local Player = game.Players.LocalPlayer
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "Fluental Modifier - V2.9 | Game: " .. gameName, -- Removed the extra quotation marks
+    Name = "Fluental Modifier - V3.1 | Game: " .. gameName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
     IntroText = "FLUENTAL",
@@ -3666,11 +3666,27 @@ local Tab = Window:MakeTab({
     PremiumOnly = false
 })
 
+local Section = Tab:AddSection({
+    Name = "FE/Herkes Görebiliyor."
+})
+
+local fireworkConnection -- Variable to hold the loop connection
+
+Tab:AddButton({
+    Name = "Havai Fişek (Bir kaç kez tıklayabilirsin (Buggy)",
+    Callback = function()
+        -- Fire the events to spawn fireworks once
+        game:GetService("ReplicatedStorage").Connection:InvokeServer(202, 1310)
+        game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1310, {})
+        game:GetService("ReplicatedStorage").ConnectionEvent:FireServer(210)
+    end
+})
+
 local spawnFirework = false -- Variable to track toggle state
 local fireworkLoop -- Variable to hold the loop thread
 
 Tab:AddToggle({
-	Name = "Spawn Firework",
+	Name = "Havai Fişek At Normal",
 	Default = false,
 	Callback = function(value)
 		spawnFirework = value
@@ -3694,28 +3710,39 @@ Tab:AddToggle({
 
 local spawnFirework = false -- Variable to track toggle state
 local fireworkConnection -- Variable to hold the loop connection
+local lastFireworkTime = 0 -- Time of the last firework spawn
+local fireworkCooldown = 1.2 -- Cooldown between fireworks in seconds (adjust as needed)
 
 Tab:AddToggle({
-	Name = "Spawn 2-3 Fireworks (Toggle and then untoggle)",
-	Default = false,
-	Callback = function(value)
-		spawnFirework = value
-		if spawnFirework then
-			-- Start spawning fireworks
-			fireworkConnection = game:GetService("RunService").Heartbeat:Connect(function()
-				game:GetService("ReplicatedStorage").Connection:InvokeServer(202, 1310)
-				game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1310, {})
-				game:GetService("ReplicatedStorage").ConnectionEvent:FireServer(210)
-			end)
-		else
-			-- Stop spawning fireworks
-			if fireworkConnection then
-				fireworkConnection:Disconnect()
-				fireworkConnection = nil
-			end
-		end
-	end
+    Name = "Havai Fişek Spamlama (EN İYİSİ) 🤑",
+    Default = false,
+    Callback = function(value)
+        spawnFirework = value
+        if spawnFirework then
+            -- Start continuously spawning fireworks
+            fireworkConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                -- Check if enough time has passed since the last firework spawn
+                if tick() - lastFireworkTime >= fireworkCooldown then
+                    -- Fire the events to spawn fireworks
+                    game:GetService("ReplicatedStorage").Connection:InvokeServer(202, 1310)
+                    game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1310, {})
+                    game:GetService("ReplicatedStorage").ConnectionEvent:FireServer(210)
+                    
+                    -- Update the last firework spawn time
+                    lastFireworkTime = tick()
+                end
+            end)
+        else
+            -- Stop spawning fireworks
+            if fireworkConnection then
+                fireworkConnection:Disconnect()
+                fireworkConnection = nil
+            end
+        end
+    end
 })
+
+
 
 local Tab = Window:MakeTab({
     Name = "Goofy",
