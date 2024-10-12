@@ -2616,7 +2616,7 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, isProcess
 end)
  
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2729,7 +2729,7 @@ Tab:AddButton({
         userInputService.InputBegan:Connect(onKeyPress)
 
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "E tuşuyla aktif edin/kapatın.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2773,7 +2773,7 @@ UIS.InputBegan:Connect(function(Key)
 end)
 
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "C tuşuyla aktif edin.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2817,7 +2817,7 @@ if player.Character then
 end
 
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık her zaman öldüğün yerde doğacaksın. (Rejoin atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2837,7 +2837,7 @@ end)
 Player.Character.Humanoid.JumpPower = getgenv().JumpPowerValue;
 
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık zıplama gücün git gide düşmek yerine sadece 50 olacak. (Reset atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3091,7 +3091,7 @@ print(Time)
          end
      end)
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık insanların üstüne tıklayarak onları uçurabilirsin!",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3336,7 +3336,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3535,7 +3535,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4226,7 +4226,7 @@ Tab:AddButton({
     Callback = function()
 
 OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Yüklenmesi biraz uzun sürebilir. / This might take some time to load.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -6705,7 +6705,7 @@ Tab:AddButton({
         end)
 
         OrionLib:MakeNotification({
-    Name = "(DELUXIE) Hazır!",
+    Name = "(FLUENTAL) Hazır!",
     Content = "Artık afk olduğun için oyundan atılmayacaksın.",
     Image = "rbxassetid://4483345998",
     Time = 5
