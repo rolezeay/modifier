@@ -266,7 +266,7 @@ OrionLib:MakeNotification({
 
 local Tab = Window:MakeTab({
     Name = "Hoşgeldiniz",
-    Icon = "rbxassetid://7733955740",
+    Icon = "rbxassetid://121433556914194",
     PremiumOnly = false
 })
 
@@ -276,7 +276,7 @@ Tab:AddParagraph("SIKILDIM AQ","Artık ekleyecek bir şey bulamıyorum amk")
 
 local Tab = Window:MakeTab({
     Name = "Ana Yer",
-    Icon = "rbxassetid://7733960981",
+    Icon = "rbxassetid://100862720415063",
     PremiumOnly = false
 })
 
