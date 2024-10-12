@@ -240,12 +240,12 @@ local Player = game.Players.LocalPlayer
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "Fluental Modifier - V2.6 | Game: " .. gameName, -- Removed the extra quotation marks
+    Name = "Fluental Modifier - V2.8 | Game: " .. gameName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
     IntroText = "FLUENTAL",
-    IntroIcon = "rbxassetid://7733752630",
-    Icon = "rbxassetid://7733920519",
+    IntroIcon = "rbxassetid://16365563022",
+    Icon = "rbxassetid://16365563022",
     ConfigFolder = "OrionTest"
 })
 --Tab 1
@@ -3143,7 +3143,7 @@ Tab:AddButton({
 
 local Tab = Window:MakeTab({
     Name = "Messup Anim",
-    Icon = "rbxassetid://4483345998",
+    Icon = "rbxassetid://7564719393",
     PremiumOnly = false
 })
 Tab:AddButton({
@@ -3200,7 +3200,7 @@ local giga = game.Players.LocalPlayer.Character
 
 local Tab = Window:MakeTab({
     Name = "Oyuncu",
-    Icon = "rbxassetid://7733954058",
+    Icon = "rbxassetid://107773970772705",
     PremiumOnly = false
 })
 
@@ -3654,8 +3654,65 @@ Tab:AddButton({
 })
 
 local Tab = Window:MakeTab({
+    Name = "Meepcity",
+    Icon = "rbxassetid://16365563022",
+    PremiumOnly = false
+})
+
+local spawnFirework = false -- Variable to track toggle state
+local fireworkLoop -- Variable to hold the loop thread
+
+Tab:AddToggle({
+	Name = "Spawn Firework",
+	Default = false,
+	Callback = function(value)
+		spawnFirework = value
+		if spawnFirework then
+			-- Start spawning fireworks in a loop
+			fireworkLoop = coroutine.create(function()
+				while spawnFirework do
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(202, 1310)
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1310, {})
+					game:GetService("ReplicatedStorage").ConnectionEvent:FireServer(210)
+					wait(1.5) -- Adjust the wait time if needed for a slower/faster spawn rate
+				end
+			end)
+			coroutine.resume(fireworkLoop)
+		else
+			-- Stop spawning fireworks by breaking the loop
+			spawnFirework = false
+		end
+	end
+})
+
+local spawnFirework = false -- Variable to track toggle state
+local fireworkConnection -- Variable to hold the loop connection
+
+Tab:AddToggle({
+	Name = "Spawn 2-3 Fireworks (Toggle and then untoggle)",
+	Default = false,
+	Callback = function(value)
+		spawnFirework = value
+		if spawnFirework then
+			-- Start spawning fireworks
+			fireworkConnection = game:GetService("RunService").Heartbeat:Connect(function()
+				game:GetService("ReplicatedStorage").Connection:InvokeServer(202, 1310)
+				game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1310, {})
+				game:GetService("ReplicatedStorage").ConnectionEvent:FireServer(210)
+			end)
+		else
+			-- Stop spawning fireworks
+			if fireworkConnection then
+				fireworkConnection:Disconnect()
+				fireworkConnection = nil
+			end
+		end
+	end
+})
+
+local Tab = Window:MakeTab({
     Name = "Goofy",
-    Icon = "rbxassetid://4483345998",
+    Icon = "rbxassetid://126133429358591",
     PremiumOnly = false
 })
 
@@ -6414,7 +6471,7 @@ Tab:AddButton({
 
 local Tab = Window:MakeTab({
     Name = "Daha Fazlası",
-    Icon = "rbxassetid://7734111084",
+    Icon = "rbxassetid://133818775236467",
     PremiumOnly = false
 })
 
@@ -6653,7 +6710,7 @@ Tab:AddButton({
 
 local Tab = Window:MakeTab({
     Name = "Başka şeyler",
-    Icon = "rbxassetid://7733919783",
+    Icon = "rbxassetid://133113532239316",
     PremiumOnly = false
 })
 local Section = Tab:AddSection({
@@ -20644,7 +20701,7 @@ end
 
 local Tab = Window:MakeTab({
     Name = "Key Checking",
-    Icon = "rbxassetid://4483345998",
+    Icon = "rbxassetid://136496148729184",
     PremiumOnly = false
 })
 
@@ -20664,4 +20721,4 @@ Tab:AddButton({
             MakeScriptHub() 
             end
     end    
-})
+})                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
