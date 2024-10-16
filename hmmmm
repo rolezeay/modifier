@@ -240,7 +240,7 @@ local Player = game.Players.LocalPlayer
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "Fluental Modifier - V3.3 | Game: " .. gameName, -- Removed the extra quotation marks
+    Name = "Fluental Modifier - V3.5 | Game: " .. gameName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
     IntroText = "FLUENTAL",
@@ -3841,7 +3841,7 @@ Tab:AddButton({
 
 
 local Section = Tab:AddSection({
-    Name = "Client"
+    Name = "Sadece sen görebilirsin/Client"
 })
 
 Tab:AddTextbox({
@@ -3872,6 +3872,168 @@ Tab:AddButton({
     end    
 })
 
+local Section = Tab:AddSection({
+    Name = "Okul/School (ÖNCE BÜTÜN EŞYALARI TAK AÇIN)"
+})
+
+local Section = Tab:AddSection({
+    Name = "OKUL SUNUCUSUNU GÖKKUŞAĞI YAPMAK İÇİN HEPSİNİ AÇIN"
+})
+
+local Section = Tab:AddSection({
+    Name = "TURN ON EVERYTHING TO MAKE SCHOOL SERVER RAINBOW"
+})
+
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(1092.3116, 61.7685, 466.3014),
+    Vector3.new(1094.1842, 61.7685, 503.0861),
+    Vector3.new(1064.7563, 61.7685, 504.5841),
+    Vector3.new(1062.8262, 61.7685, 466.6676)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 1",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start the teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(1090.9261, 61.7685, 497.4159),
+    Vector3.new(1090.5613, 61.7685, 476.9165),
+    Vector3.new(1068.0665, 61.7685, 475.6452),
+    Vector3.new(1066.8375, 61.7685, 462.2423),
+    Vector3.new(1074.2689, 61.7685, 475.4297),
+    Vector3.new(1074.7621, 61.7685, 489.7285),
+    Vector3.new(1063.8501, 61.7685, 489.6956),
+    Vector3.new(1068.0984, 61.7685, 466.2948),
+    Vector3.new(1082.5527, 61.7685, 466.3384)
+}
+
+local teleporting = false
+local floatUp = true -- Track whether the character is floating up or down
+local floatHeight = 5 -- How high the character will float
+local floatSpeed = 0.05 -- Speed at which the character floats
+
+local teleportLocations = {
+    Vector3.new(1090.9261, 61.7685, 497.4159),
+    Vector3.new(1090.5613, 61.7685, 476.9165),
+    Vector3.new(1068.0665, 61.7685, 475.6452),
+    Vector3.new(1066.8375, 61.7685, 462.2423),
+    Vector3.new(1074.2689, 61.7685, 475.4297),
+    Vector3.new(1074.7621, 61.7685, 489.7285),
+    Vector3.new(1063.8501, 61.7685, 489.6956),
+    Vector3.new(1068.0984, 61.7685, 466.2948),
+    Vector3.new(1082.5527, 61.7685, 466.3384)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                -- Teleport to the location
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+
+                -- Float the character up and down
+                local originalPosition = character.HumanoidRootPart.Position
+                while teleporting do
+                    if floatUp then
+                        character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, floatSpeed, 0)
+                        if (character.HumanoidRootPart.Position - originalPosition).Y >= floatHeight then
+                            floatUp = false
+                        end
+                    else
+                        character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, -floatSpeed, 0)
+                        if (originalPosition - character.HumanoidRootPart.Position).Y >= 0 then
+                            floatUp = true
+                            break -- Stop floating and teleport to the next location
+                        end
+                    end
+                    wait(0.05) -- Adjust the delay for smoother or faster float
+                end
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 2",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
+
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(1183.8671, 61.7400, 501.5655),
+    Vector3.new(1185.1431, 61.7400, 592.3522),
+    Vector3.new(928.0732, 61.7400, 594.6258),
+    Vector3.new(924.5529, 61.7400, 501.4068)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 3",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
 
 local Tab = Window:MakeTab({
     Name = "Goofy",
