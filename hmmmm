@@ -240,7 +240,7 @@ local Player = game.Players.LocalPlayer
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "Fluental Modifier - V3.1 | Game: " .. gameName, -- Removed the extra quotation marks
+    Name = "Fluental Modifier - V3.3 | Game: " .. gameName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
     IntroText = "FLUENTAL",
@@ -269,9 +269,20 @@ local Tab = Window:MakeTab({
     Icon = "rbxassetid://121433556914194",
     PremiumOnly = false
 })
-
+local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local executorName = identifyexecutor() -- Get the name of the executor
+local player = game:GetService("Players").LocalPlayer -- Get the local player
+local player = game:GetService("Players").LocalPlayer -- Get the local player
+local player = game:GetService("Players").LocalPlayer -- Get the local player
+local username = player.Name -- Get the player's username
+local userId = player.UserId -- Get the player's user ID
+local accountAge = player.AccountAge -- Get the player's account age (in days)
 Tab:AddParagraph("Merhaba!","Merhaba, "..Player.Name.." ")
-Tab:AddParagraph("Teşekkürler.","Deluxie'yi kullandığın için teşekkür ederim. Umarım keyif alırsın.")
+Tab:AddParagraph("Oyun:", gameName)
+Tab:AddParagraph("Executor:", executorName)
+-- Add a paragraph displaying the user's detailed info
+Tab:AddParagraph("Kullanıcı Detayları:", "Kullanıcı Adı: " .. username .. "\nKullanıcı ID: " .. userId .. "\nHesap Yaşı: " .. accountAge .. " Gün")
+Tab:AddParagraph("Teşekkürler.","Fluental'i kullandığın için teşekkür ederim. Umarım keyif alırsın")
 Tab:AddParagraph("SIKILDIM AQ","Artık ekleyecek bir şey bulamıyorum amk")
 
 local Tab = Window:MakeTab({
@@ -3742,6 +3753,124 @@ Tab:AddToggle({
     end
 })
 
+local toggleLoop = false -- A flag to control the loop
+
+Tab:AddToggle({
+	Name = "Kalp Balon Spam",
+	Default = false,
+	Callback = function(Value)
+		toggleLoop = Value -- Update the flag based on the toggle's state
+		
+		if toggleLoop then
+			-- Start the loop when the toggle is turned on
+			while toggleLoop do
+				game:GetService("ReplicatedStorage").Connection:InvokeServer(202)
+				game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1039, {})
+				game:GetService("ReplicatedStorage").Connection:InvokeServer(202)
+				
+				wait() -- Add a delay to avoid overwhelming the server (adjust as needed)
+			end
+		end
+	end    
+})
+
+Tab:AddButton({
+    Name = "Bütün eşyaları tak (EŞYALARI SİLMEK İÇİN REJOİN ATIN)",
+    Callback = function()
+        -- Fire the events to spawn fireworks once
+      local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local function tryID(id)
+    print("ID'ler test ediliyor:", id)
+    ReplicatedStorage.Connection:InvokeServer(201, id, {})
+end
+
+for id = 0, 8000 do
+    coroutine.wrap(tryID)(id)  -- Launch each ID attempt in a new coroutine
+end
+
+OrionLib:MakeNotification({
+    Name = "(FLUENTAL) işlem tamam!",
+    Content = "8000 eşya İD'si denendi. çalışanların İDlerin hepsi karakterinize eklendi.",
+    Image = "rbxassetid://7733964719",
+    Time = 5
+})
+    end
+})
+
+Tab:AddButton({
+    Name = "Hızlı erişim rejoin",
+    Callback = function()
+       	 game:GetService("TeleportService"):Teleport(game.PlaceId)
+	 wait()
+	 
+ 
+ 
+ wait();
+    end
+})
+
+
+Tab:AddParagraph("Not:","Plus gamepassini kimse görmese bile plus eşyalarını aldığınız zaman insanlar görür. Boomboxtada aynı şekilde. ")
+
+Tab:AddToggle({
+	Name = "Spoof PLUS/BOOMBOX",
+	Default = false,
+	Callback = function(Value)
+		if Value then
+			-- When toggle is ON
+			game.Players.LocalPlayer:SetAttribute("PLUS", true)
+			game.Players.LocalPlayer:SetAttribute("BoomBox", true)
+		else
+			-- When toggle is OFF
+			game.Players.LocalPlayer:SetAttribute("PLUS", false)
+			game.Players.LocalPlayer:SetAttribute("BoomBox", false)
+		end
+	end    
+})
+
+Tab:AddButton({
+    Name = "Havai Fişek (Bir kaç kez tıklayabilirsin (Buggy)",
+    Callback = function()
+        -- Fire the events to spawn fireworks once
+        game:GetService("ReplicatedStorage").Connection:InvokeServer(202, 1310)
+        game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1310, {})
+        game:GetService("ReplicatedStorage").ConnectionEvent:FireServer(210)
+    end
+})
+
+
+local Section = Tab:AddSection({
+    Name = "Client"
+})
+
+Tab:AddTextbox({
+	Name = "Para Miktarı",
+	Default = "",
+	TextDisappear = true,
+	Callback = function(Value)
+		-- Change the coin amount to the value typed in the textbox
+		local coinAmount = tonumber(Value) -- Convert input to a number
+		
+		-- Ensure the input is a valid number before updating the coin amounts
+		if coinAmount then
+			game:GetService("Players").LocalPlayer.PlayerGui.MainGui.CoinsContainer.Container.Amount.Text = coinAmount
+			game:GetService("Players").SlayerssUnleashedd.PlayerGui.ShopGui.Background.Content.Main.TopContainer.CoinsContainer.TotalCoins.Text = coinAmount
+			game:GetService("Players").SlayerssUnleashedd.PlayerGui.ScreenGui.ItemShop.ShopContent.TopBar.ButtonBuyCoins.CoinAmount.Text = coinAmount
+		else
+			warn("Invalid input! Please enter a valid number.")
+		end
+	end	  
+})
+
+Tab:AddButton({
+    Name = "Sınırsız para",
+    Callback = function()
+       game:GetService("Players").LocalPlayer.PlayerGui.MainGui.CoinsContainer.Container.Amount.Text = math.huge
+	game:GetService("Players").SlayerssUnleashedd.PlayerGui.ShopGui.Background.Content.Main.TopContainer.CoinsContainer.TotalCoins.Text = math.huge
+	game:GetService("Players").SlayerssUnleashedd.PlayerGui.ScreenGui.ItemShop.ShopContent.TopBar.ButtonBuyCoins.CoinAmount.Text = math.huge
+    end    
+})
 
 
 local Tab = Window:MakeTab({
@@ -6711,13 +6840,12 @@ local Section = Tab:AddSection({
 Tab:AddButton({
     Name = "Aynı sunucuya tekrar giriş yap",
     Callback = function()
-        local ts = game:GetService("TeleportService")
-
-local p = game:GetService("Players").LocalPlayer
-
+        	 game:GetService("TeleportService"):Teleport(game.PlaceId)
+	 wait()
+	 
  
-
-ts:Teleport(game.PlaceId, p)
+ 
+ wait();
     end    
 })
 
@@ -20716,20 +20844,6 @@ while true do
     wait()
 end
     end    
-})
-
-Tab:AddButton({
-	Name = "CMD X",
-	Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
-  	end    
-})
-
-Tab:AddButton({
-	Name = "C00lgui",
-	Callback = function()
-        loadstring(game:GetObjects("rbxassetid://8127297852")[1].Source)()
-  	end    
 })
 
 Tab:AddButton({
