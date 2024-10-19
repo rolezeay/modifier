@@ -240,7 +240,7 @@ local Player = game.Players.LocalPlayer
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "Fluental Modifier - V3.5 | Game: " .. gameName, -- Removed the extra quotation marks
+    Name = "Fluental Modifier - V3.7 | Game: " .. gameName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
     IntroText = "FLUENTAL",
@@ -3753,30 +3753,147 @@ Tab:AddToggle({
     end
 })
 
-local toggleLoop = false -- A flag to control the loop
+local Section = Tab:AddSection({
+    Name = "Balon Spawnerı"
+})
 
+local selectedBalloonColor = "Red" -- Default balloon color
+local spawnBalloons = false -- To control the toggle
+
+-- Dropdown for selecting the balloon color
+Tab:AddDropdown({
+	Name = "Balon rengini seçin", 
+	Default = "Red",
+	Options = {"Red", "Blue", "Green", "Purple", "White", "Heart"}, -- Color options
+	Callback = function(Value)
+		selectedBalloonColor = Value -- Update selected balloon color
+		print("Selected balloon color: " .. selectedBalloonColor)
+	end    
+})
+
+-- Toggle for starting/stopping balloon spawning
 Tab:AddToggle({
-	Name = "Kalp Balon Spam",
+	Name = "Balonu spamlamaya başla", 
 	Default = false,
 	Callback = function(Value)
-		toggleLoop = Value -- Update the flag based on the toggle's state
-		
-		if toggleLoop then
-			-- Start the loop when the toggle is turned on
-			while toggleLoop do
-				game:GetService("ReplicatedStorage").Connection:InvokeServer(202)
-				game:GetService("ReplicatedStorage").Connection:InvokeServer(201, 1039, {})
-				game:GetService("ReplicatedStorage").Connection:InvokeServer(202)
-				
-				wait() -- Add a delay to avoid overwhelming the server (adjust as needed)
-			end
+		spawnBalloons = Value -- Update the toggle state
+		print("Spawning balloons: " .. tostring(spawnBalloons))
+
+		if spawnBalloons then
+			-- Start balloon spawning in a separate thread
+			task.spawn(function()
+				while spawnBalloons do
+					-- Map the selected balloon color to the balloon IDs
+					local balloonID
+					if selectedBalloonColor == "Red" then
+						balloonID = 1311
+					elseif selectedBalloonColor == "Blue" then
+						balloonID = 1312
+					elseif selectedBalloonColor == "Green" then
+						balloonID = 1313
+					elseif selectedBalloonColor == "Purple" then
+						balloonID = 1314
+					elseif selectedBalloonColor == "White" then
+						balloonID = 1315
+					elseif selectedBalloonColor == "Heart" then
+						balloonID = 1039 -- Heart balloon ID
+					end
+
+					-- Spawn the selected balloon type
+					local args = {
+						[1] = 201,
+						[2] = balloonID,
+						[3] = {}
+					}
+
+					local args2 = {
+						[1] = 202
+					}
+
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					task.wait(0) -- Wait before spawning the next balloon
+				end
+			end)
 		end
 	end    
+})
+
+
+local spawnAllBalloons = false -- To control the toggle
+
+-- Toggle for starting/stopping all balloon spawning
+Tab:AddToggle({
+	Name = "Tüm balonları spamla", 
+	Default = false,
+	Callback = function(Value)
+		spawnAllBalloons = Value -- Update the toggle state
+		print("Spawning all balloons: " .. tostring(spawnAllBalloons))
+
+		if spawnAllBalloons then
+			-- Start spawning all balloons in a separate thread
+			task.spawn(function()
+				while spawnAllBalloons do
+					-- Spawn balloon with ID 1311
+					local args = {
+						[1] = 201,
+						[2] = 1311,
+						[3] = {}
+					}
+					local args2 = {
+						[1] = 202
+					}
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					-- Spawn balloon with ID 1312
+					args[2] = 1312
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					-- Spawn balloon with ID 1313
+					args[2] = 1313
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					-- Spawn balloon with ID 1314
+					args[2] = 1314
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					-- Spawn balloon with ID 1315
+					args[2] = 1315
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					-- Spawn balloon with ID 1039 (new addition)
+					args[2] = 1039
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args))
+					game:GetService("ReplicatedStorage").Connection:InvokeServer(unpack(args2))
+
+					task.wait(0) -- Wait before spawning the next set of balloons
+				end
+			end)
+		end
+	end    
+})
+
+local Section = Tab:AddSection({
+    Name = "Diğer"
 })
 
 Tab:AddButton({
     Name = "Bütün eşyaları tak (EŞYALARI SİLMEK İÇİN REJOİN ATIN)",
     Callback = function()
+
+	OrionLib:MakeNotification({
+    Name = "(FLUENTAL) İD'ler test ediliyor...",
+    Content = "Lütfen bekleyin./Testing ID's. Please wait.",
+    Image = "rbxassetid://7733964719",
+    Time = 5
+})
+	wait(3)
         -- Fire the events to spawn fireworks once
       local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -4024,6 +4141,159 @@ end
 
 Tab:AddToggle({
     Name = "TP 3",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
+
+local Section = Tab:AddSection({
+    Name = "Backyard/Bahçe."
+})
+
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(-1106.005615234375, -14.201805114746094, -484.37945556640625),
+    Vector3.new(-892.6954345703125, -14.201805114746094, -452.23150634765625),
+    Vector3.new(-880.7671508789062, -14.201805114746094, -278.4547119140625),
+    Vector3.new(-1115.399658203125, -14.201803207397461, -291.7050476074219)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 1",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
+
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(-913.1793823242188, -14.201805114746094, -452.7626037597656),
+    Vector3.new(-1071.9766845703125, -14.201803207397461, -281.61505126953125),
+    Vector3.new(-1033.51123046875, -14.00179672241211, -428.9277038574219),
+    Vector3.new(-999.7557983398438, -14.201803207397461, -400.63763427734375)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 2",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
+
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(-1015.1229248046875, -14.201805114746094, -374.8466796875),
+    Vector3.new(-1001.0299682617188, -14.201805114746094, -427.4181213378906),
+    Vector3.new(-955.9120483398438, -14.201805114746094, -397.5980529785156),
+    Vector3.new(-974.5886840820312, -14.201805114746094, -386.314208984375)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 3",
+    Default = false,
+    Callback = function(Value)
+        teleporting = Value
+        if teleporting then
+            teleportLoop() -- Start teleport loop when toggled on
+        else
+            print("Teleporting stopped") -- Optional message when toggled off
+        end
+    end    
+})
+
+local teleporting = false
+
+local teleportLocations = {
+    Vector3.new(-931.5924682617188, -6.1998291015625, -396.6084899902344),
+    Vector3.new(-857.3260498046875, 9.817277908325195, -432.8778381347656),
+    Vector3.new(-1047.3197021484375, -6.1998291015625, -329.19024658203125),
+    Vector3.new(-948.4066772460938, -6.199830055236816, -331.0394592285156),
+	Vector3.new(-930.6904907226562, -6.199830055236816, -429.21527099609375)
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function teleportLoop()
+    while teleporting do
+        for _, location in ipairs(teleportLocations) do
+            if not teleporting then break end -- Stop if toggle is disabled
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                character.HumanoidRootPart.CFrame = CFrame.new(location)
+            end
+            wait(0) -- Delay between each teleport
+        end
+    end
+end
+
+Tab:AddToggle({
+    Name = "TP 4",
     Default = false,
     Callback = function(Value)
         teleporting = Value
