@@ -237,10 +237,51 @@ print("Game Name: " .. gameName)
 -- Load OrionLib and create the window with the game name
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/rolezeay/librarymod/refs/heads/main/source')))() 
 local Player = game.Players.LocalPlayer
+local Players = game:GetService("Players")
+
+-- Function to show a notification using OrionLib
+local function showNotification(title, content)
+    OrionLib:MakeNotification({
+        Name = title,
+        Content = content,
+        Image = "rbxassetid://7733964719", -- Your notification image
+        Time = 5
+    })
+end
+
+-- Create a new sound instance
+local openingSound = Instance.new("Sound")
+openingSound.SoundId = "rbxassetid://6958727243"  -- Replace with your actual sound asset ID
+openingSound.Volume = 3  -- You can adjust the volume if needed
+openingSound.PlayOnRemove = false
+openingSound.Looped = false
+openingSound.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui") -- Parent to Player's GUI
+
+-- Function to play the opening sound
+local function playOpeningSound()
+    openingSound:Play()
+end
+
+-- Assuming this is the part of your script where the GUI opens
+playOpeningSound()
+
+-- Rest of your GUI code
+
+
+-- Player joined event
+Players.PlayerAdded:Connect(function(player)
+    showNotification("Oyuncu Katıldı", player.Name .. " has joined the game.")
+end)
+
+-- Player left event
+Players.PlayerRemoving:Connect(function(player)
+    showNotification("Oyuncu Çıktı", player.Name .. " has left the game.")
+end)
+
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "SelfCreation Modifier - V3.8 | " .. executorName, -- Removed the extra quotation marks
+    Name = "SelfCreation Modifier - V3.9 | " .. executorName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
     IntroText = "SELFCREATION",
@@ -4538,9 +4579,36 @@ Tab:AddToggle({
         if teleporting then
             teleportLoop() -- Start teleport loop when toggled on
         else
-            print("Teleporting stopped") -- Optional message when toggled off
+            print("Teleporting stopped.") -- Optional message when toggled off
         end
     end    
+})
+
+local Tab = Window:MakeTab({
+    Name = "R6 Emotelar",
+    Icon = "rbxassetid://7743871480",
+    PremiumOnly = false
+})
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local animation = Instance.new("Animation")
+animation.AnimationId = "rbxassetid://33796059"
+
+local loadedAnimation = humanoid:LoadAnimation(animation)
+
+Tab:AddToggle({
+	Name = "Go Wild",
+	Default = false,
+	Callback = function(value) 
+		if value then
+			loadedAnimation:Play()
+			loadedAnimation:AdjustSpeed(99) -- Set a high speed for the animation (e.g., 5x speed)
+		else
+			loadedAnimation:Stop()
+		end
+	end    
 })
 
 local Tab = Window:MakeTab({
