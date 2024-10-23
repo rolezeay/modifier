@@ -252,7 +252,7 @@ end
 -- Create a new sound instance
 local openingSound = Instance.new("Sound")
 openingSound.SoundId = "rbxassetid://6958727243"  -- Replace with your actual sound asset ID
-openingSound.Volume = 3  -- You can adjust the volume if needed
+openingSound.Volume = 5  -- You can adjust the volume if needed
 openingSound.PlayOnRemove = false
 openingSound.Looped = false
 openingSound.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui") -- Parent to Player's GUI
@@ -281,10 +281,10 @@ end)
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "SelfCreation Modifier - V3.9 | " .. executorName, -- Removed the extra quotation marks
+    Name = "NiggaCreation Modifier - V4 | " .. executorName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
-    IntroText = "SELFCREATION",
+    IntroText = "NIGGACREATION",
     IntroIcon = "rbxassetid://16365563022",
     Icon = "rbxassetid://16365563022",
     ConfigFolder = "OrionTest"
@@ -323,7 +323,7 @@ Tab:AddParagraph("Oyun:", gameName)
 Tab:AddParagraph("Executor:", executorName)
 -- Add a paragraph displaying the user's detailed info
 Tab:AddParagraph("Kullanıcı Detayları:", "Kullanıcı Adı: " .. username .. "\nKullanıcı ID: " .. userId .. "\nHesap Yaşı: " .. accountAge .. " Gün")
-Tab:AddParagraph("Teşekkürler.","SELFCREATION'i kullandığın için teşekkür ederim. Umarım keyif alırsın")
+Tab:AddParagraph("Teşekkürler.","NiggaCreation'i kullandığın için teşekkür ederim. Umarım keyif alırsın")
 Tab:AddParagraph("SIKILDIM AQ","Artık ekleyecek bir şey bulamıyorum amk")
 
 local Tab = Window:MakeTab({
@@ -2668,7 +2668,7 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, isProcess
 end)
  
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2781,7 +2781,7 @@ Tab:AddButton({
         userInputService.InputBegan:Connect(onKeyPress)
 
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "E tuşuyla aktif edin/kapatın.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2825,7 +2825,7 @@ UIS.InputBegan:Connect(function(Key)
 end)
 
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "C tuşuyla aktif edin.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2869,7 +2869,7 @@ if player.Character then
 end
 
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık her zaman öldüğün yerde doğacaksın. (Rejoin atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2889,7 +2889,7 @@ end)
 Player.Character.Humanoid.JumpPower = getgenv().JumpPowerValue;
 
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık zıplama gücün git gide düşmek yerine sadece 50 olacak. (Reset atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3143,7 +3143,7 @@ print(Time)
          end
      end)
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık insanların üstüne tıklayarak onları uçurabilirsin!",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3217,9 +3217,190 @@ loadstring(game:HttpGet("https://cracklua.github.io/cracks/UserCreation"))()
 })
 
 local Tab = Window:MakeTab({
-    Name = "SelfCreation",
+    Name = "NiggaCreation",
     Icon = "rbxassetid://7743869054",
     PremiumOnly = false
+})
+Tab:AddParagraph("Note:","this auto bypasser i made is still on beta. it might not work properly on some games.")
+
+Tab:AddButton({
+    Name = "AUTO BYPASSER (BETA)",
+    Callback = function()
+-- Services
+local TextChatService = game:GetService("TextChatService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Function to send a message via TextChatService
+local function sendMessage(message)
+    local textChannel = TextChatService:WaitForChild("TextChannels"):FindFirstChild("RBXGeneral")
+    if textChannel then
+        textChannel:SendAsync(message)
+    end
+end
+
+-- Letter replacements for the entire alphabet
+local replacements = {
+    a = "α",  b = "Ь",  c = "с",  d = "ᴅ",  e = "ҽ͎", f = "₣͎͎͎", g = "g̺",
+    h = "h͎", i = "i̳",  j = "ј",  k = "к",  l = "ӏ",  m = "м",  n = "ŋ͎",
+    o = "σ͎", p = "ρ",  q = "q",  r = "г",  s = "š",  t = "т",  u = "υ",
+    v = "ν",  w = "ω",  x = "χ",  y = "γ",  z = "ζ"
+}
+
+-- Function to replace letters in the message
+local function replaceLetters(message)
+    local modifiedMessage = message
+    for letter, replacement in pairs(replacements) do
+        modifiedMessage = modifiedMessage:gsub(letter, replacement)
+    end
+    return modifiedMessage
+end
+
+-- Function to create the custom chatbox GUI
+local function createChatbox()
+    -- Remove any existing chatbox if it exists
+    local existingChatbox = LocalPlayer.PlayerGui:FindFirstChild("CustomChatbox")
+    if existingChatbox then
+        existingChatbox:Destroy()
+    end
+
+    -- Create a new ScreenGui for the custom chatbox
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "CustomChatbox"
+    ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+    -- Create a Frame to contain the TextBox and Send Button
+    local Frame = Instance.new("Frame")
+    Frame.Parent = ScreenGui
+    Frame.Size = UDim2.new(0, 360, 0, 100)
+    Frame.Position = UDim2.new(0.5, -175, 0.8, -40)
+    Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    Frame.BorderSizePixel = 0
+
+    -- Add UICorner for rounded corners to Frame
+    local UICornerFrame = Instance.new("UICorner")
+    UICornerFrame.CornerRadius = UDim.new(0, 10)
+    UICornerFrame.Parent = Frame
+
+    -- Make GUI draggable with smooth drift
+    local dragging = false
+    local dragInput, mousePos, framePos
+
+    Frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            mousePos = input.Position
+            framePos = Frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    Frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - mousePos
+            local tween = TweenService:Create(Frame, TweenInfo.new(0.2), {
+                Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+            })
+            tween:Play()
+        end
+    end)
+
+    -- Add label "NiggaCreation Auto Bypasser" and place it at the top
+    local Label = Instance.new("TextLabel")
+    Label.Parent = Frame
+    Label.Size = UDim2.new(0, 330, 0, 20)
+    Label.Position = UDim2.new(0.5, -165, 0, 5)
+    Label.BackgroundTransparency = 1
+    Label.Text = "NiggaCreation Auto Bypasser"
+    Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Label.Font = Enum.Font.GothamBold
+    Label.TextSize = 16
+
+    -- Configure the TextBox
+    local TextBox = Instance.new("TextBox")
+    TextBox.Parent = Frame
+    TextBox.Size = UDim2.new(0, 230, 0, 30)
+    TextBox.Position = UDim2.new(0, 10, 0, 45)
+    TextBox.PlaceholderText = "Type your message here..."
+    TextBox.Text = ""
+    TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TextBox.BorderSizePixel = 0
+
+    -- Add UICorner for rounded corners to TextBox
+    local UICornerTextBox = Instance.new("UICorner")
+    UICornerTextBox.CornerRadius = UDim.new(0, 10)
+    UICornerTextBox.Parent = TextBox
+
+    -- Change TextBox font to something cooler
+    TextBox.Font = Enum.Font.GothamBold
+    TextBox.TextSize = 16
+
+    -- Configure the Send Button
+    local SendButton = Instance.new("TextButton")
+    SendButton.Parent = Frame
+    SendButton.Size = UDim2.new(0, 100, 0, 30)
+    SendButton.Position = UDim2.new(0, 250, 0, 45)
+    SendButton.Text = "Send"
+    SendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SendButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
+    SendButton.BorderSizePixel = 0
+
+    -- Add UICorner for rounded corners to Send Button
+    local UICornerButton = Instance.new("UICorner")
+    UICornerButton.CornerRadius = UDim.new(0, 10)
+    UICornerButton.Parent = SendButton
+
+    -- Change the button's font to a different one and make it bold
+    SendButton.Font = Enum.Font.FredokaOne
+    SendButton.TextSize = 18
+
+    -- Function to handle sending the message
+    local function handleSendMessage()
+        local message = TextBox.Text
+        if message and message ~= "" then
+            -- Replace letters in the message
+            local modifiedMessage = replaceLetters(message)
+
+            -- Send the modified message using the TextChatService
+            sendMessage(modifiedMessage)
+
+            -- Clear the TextBox after sending
+            TextBox.Text = ""
+        end
+    end
+
+    -- Send message when the Send button is clicked
+    SendButton.MouseButton1Click:Connect(handleSendMessage)
+
+    -- Send message when "Enter" is pressed
+    TextBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            handleSendMessage()
+        end
+    end)
+end
+
+-- Connect to the CharacterAdded event to recreate the GUI on respawn
+LocalPlayer.CharacterAdded:Connect(createChatbox)
+
+-- Create the chatbox initially
+createChatbox()
+
+    end    
 })
 
 Tab:AddParagraph("WARNING:","just know that this sucks. these bypasses are quickly made by me they kinda suck, but i put effort into them atleast xd (this might be the most newgen shit i ever made..)")
@@ -3626,7 +3807,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3825,7 +4006,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4167,7 +4348,7 @@ Tab:AddButton({
     Callback = function()
 
 	OrionLib:MakeNotification({
-    Name = "(SELFCREATION) İD'ler test ediliyor...",
+    Name = "(NiggaCreation) İD'ler test ediliyor...",
     Content = "Lütfen bekleyin./Testing ID's. Please wait.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4186,7 +4367,7 @@ for id = 0, 8000 do
 end
 
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) işlem tamam!",
+    Name = "(NiggaCreation) işlem tamam!",
     Content = "8000 eşya İD'si denendi. çalışanların İDlerin hepsi karakterinize eklendi.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -9847,7 +10028,7 @@ Tab:AddButton({
     Callback = function()
 
 OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Yüklenmesi biraz uzun sürebilir. / This might take some time to load.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -12325,7 +12506,7 @@ Tab:AddButton({
         end)
 
         OrionLib:MakeNotification({
-    Name = "(SELFCREATION) Hazır!",
+    Name = "(NiggaCreation) Hazır!",
     Content = "Artık afk olduğun için oyundan atılmayacaksın.",
     Image = "rbxassetid://4483345998",
     Time = 5
