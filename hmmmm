@@ -2668,7 +2668,7 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, isProcess
 end)
  
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2781,7 +2781,7 @@ Tab:AddButton({
         userInputService.InputBegan:Connect(onKeyPress)
 
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "E tuşuyla aktif edin/kapatın.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2825,7 +2825,7 @@ UIS.InputBegan:Connect(function(Key)
 end)
 
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "C tuşuyla aktif edin.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2869,7 +2869,7 @@ if player.Character then
 end
 
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık her zaman öldüğün yerde doğacaksın. (Rejoin atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2889,7 +2889,7 @@ end)
 Player.Character.Humanoid.JumpPower = getgenv().JumpPowerValue;
 
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık zıplama gücün git gide düşmek yerine sadece 50 olacak. (Reset atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3143,7 +3143,7 @@ print(Time)
          end
      end)
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık insanların üstüne tıklayarak onları uçurabilirsin!",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3222,6 +3222,31 @@ local Tab = Window:MakeTab({
     PremiumOnly = false
 })
 Tab:AddParagraph("Note:","this auto bypasser i made is still on beta. it might not work properly on some games.")
+
+Tab:AddButton({
+    Name = "Be able to say numbers properly",
+    Callback = function()
+	
+OrionLib:MakeNotification({
+    Name = "(NIGGACREATION) loaded.",
+    Content = "Now you should be able to say numbers how you want for some time. (You might need to activate this again after some time.)",
+    Image = "rbxassetid://7733964719",
+    Time = 10
+})
+
+local TextChatService = game:GetService("TextChatService")
+
+local function sendMessage(message)
+    local textChannel = TextChatService:WaitForChild("TextChannels"):FindFirstChild("RBXGeneral")
+    if textChannel then
+        textChannel:SendAsync(message)
+    end
+end
+
+sendMessage("/e roblox.com/library/")
+
+    end    
+})
 
 Tab:AddButton({
     Name = "AUTO BYPASSER (BETA)",
@@ -3634,7 +3659,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3833,7 +3858,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4175,7 +4200,7 @@ Tab:AddButton({
     Callback = function()
 
 	OrionLib:MakeNotification({
-    Name = "(NiggaCreation) İD'ler test ediliyor...",
+    Name = "(NIGGACREATION) İD'ler test ediliyor...",
     Content = "Lütfen bekleyin./Testing ID's. Please wait.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4194,7 +4219,7 @@ for id = 0, 8000 do
 end
 
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) işlem tamam!",
+    Name = "(NIGGACREATION) işlem tamam!",
     Content = "8000 eşya İD'si denendi. çalışanların İDlerin hepsi karakterinize eklendi.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -9855,7 +9880,7 @@ Tab:AddButton({
     Callback = function()
 
 OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Yüklenmesi biraz uzun sürebilir. / This might take some time to load.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -12333,7 +12358,7 @@ Tab:AddButton({
         end)
 
         OrionLib:MakeNotification({
-    Name = "(NiggaCreation) Hazır!",
+    Name = "(NIGGACREATION) Hazır!",
     Content = "Artık afk olduğun için oyundan atılmayacaksın.",
     Image = "rbxassetid://4483345998",
     Time = 5
