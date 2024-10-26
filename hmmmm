@@ -281,10 +281,10 @@ end)
 
 -- Correctly concatenate gameName
 local Window = OrionLib:MakeWindow({
-    Name = "NiggaCreation Modifier - V4 | " .. executorName, -- Removed the extra quotation marks
+    Name = "NovaLink Modifier - V4 | " .. executorName, -- Removed the extra quotation marks
     HidePremium = false,
     SaveConfig = true,
-    IntroText = "NIGGACREATION",
+    IntroText = "NOVALINK",
     IntroIcon = "rbxassetid://16365563022",
     Icon = "rbxassetid://16365563022",
     ConfigFolder = "OrionTest"
@@ -323,7 +323,7 @@ Tab:AddParagraph("Oyun:", gameName)
 Tab:AddParagraph("Executor:", executorName)
 -- Add a paragraph displaying the user's detailed info
 Tab:AddParagraph("Kullanıcı Detayları:", "Kullanıcı Adı: " .. username .. "\nKullanıcı ID: " .. userId .. "\nHesap Yaşı: " .. accountAge .. " Gün")
-Tab:AddParagraph("Teşekkürler.","NiggaCreation'i kullandığın için teşekkür ederim. Umarım keyif alırsın")
+Tab:AddParagraph("Teşekkürler.","NovaLink'i kullandığın için teşekkür ederim. Umarım keyif alırsın")
 Tab:AddParagraph("SIKILDIM AQ","Artık ekleyecek bir şey bulamıyorum amk")
 
 local Tab = Window:MakeTab({
@@ -2668,7 +2668,7 @@ game:GetService("UserInputService").InputBegan:Connect(function(input, isProcess
 end)
  
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2781,7 +2781,7 @@ Tab:AddButton({
         userInputService.InputBegan:Connect(onKeyPress)
 
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "E tuşuyla aktif edin/kapatın.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2825,7 +2825,7 @@ UIS.InputBegan:Connect(function(Key)
 end)
 
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "C tuşuyla aktif edin.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2869,7 +2869,7 @@ if player.Character then
 end
 
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık her zaman öldüğün yerde doğacaksın. (Rejoin atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -2889,7 +2889,7 @@ end)
 Player.Character.Humanoid.JumpPower = getgenv().JumpPowerValue;
 
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık zıplama gücün git gide düşmek yerine sadece 50 olacak. (Reset atınca gider.)",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3143,7 +3143,7 @@ print(Time)
          end
      end)
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık insanların üstüne tıklayarak onları uçurabilirsin!",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3217,7 +3217,7 @@ loadstring(game:HttpGet("https://cracklua.github.io/cracks/UserCreation"))()
 })
 
 local Tab = Window:MakeTab({
-    Name = "NiggaCreation",
+    Name = "NovaLink",
     Icon = "rbxassetid://7743869054",
     PremiumOnly = false
 })
@@ -3228,7 +3228,7 @@ Tab:AddButton({
     Callback = function()
 	
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) loaded.",
+    Name = "(NOVALINK) loaded.",
     Content = "Now you should be able to say numbers how you want for some time. (You might need to activate this again after some time.)",
     Image = "rbxassetid://7733964719",
     Time = 10
@@ -3659,7 +3659,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -3858,7 +3858,7 @@ UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 end)
  
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık R tuşuna bastığınızda 10 saniye reset limiti dolmasa bile reset çekebilirsiniz.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4200,7 +4200,7 @@ Tab:AddButton({
     Callback = function()
 
 	OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) İD'ler test ediliyor...",
+    Name = "(NOVALINK) İD'ler test ediliyor...",
     Content = "Lütfen bekleyin./Testing ID's. Please wait.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -4219,7 +4219,7 @@ for id = 0, 8000 do
 end
 
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) işlem tamam!",
+    Name = "(NOVALINK) işlem tamam!",
     Content = "8000 eşya İD'si denendi. çalışanların İDlerin hepsi karakterinize eklendi.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -9880,7 +9880,7 @@ Tab:AddButton({
     Callback = function()
 
 OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Yüklenmesi biraz uzun sürebilir. / This might take some time to load.",
     Image = "rbxassetid://7733964719",
     Time = 5
@@ -12358,7 +12358,7 @@ Tab:AddButton({
         end)
 
         OrionLib:MakeNotification({
-    Name = "(NIGGACREATION) Hazır!",
+    Name = "(NOVALINK) Hazır!",
     Content = "Artık afk olduğun için oyundan atılmayacaksın.",
     Image = "rbxassetid://4483345998",
     Time = 5
